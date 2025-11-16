@@ -10,3 +10,5 @@ export type EmitFunction = (f: Frame) => void;
 export interface State {
   handle(ctx: ParserContext, emit: EmitFunction): State;
 }
+
+export type StateFactory = () => State;

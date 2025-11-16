@@ -30,7 +30,7 @@ class ReadTypeState {
         emit({ stateType: 'RESP_ARRAY', length: size });
         return new ReadTypeState();
       case BULK_STR_PREFIX:
-        return new ReadBulkStringState(size);
+        return new ReadBulkStringState(size, () => new ReadTypeState());
       default:
         throw new Error(`Unsupported RESP type: ${typeChar}`);
     }

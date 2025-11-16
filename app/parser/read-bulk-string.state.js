@@ -1,21 +1,25 @@
 /**
  * @typedef {import('../../types/parser-context').ParserContext} IParserContext
  * @typedef {import('../../types/state').State} IState
+ * @typedef {import('../../types/state').StateFactory} StateFactory
  * @typedef {import('../../types/state').EmitFunction} EmitFunction
  */
-
-//const ReadTypeState = require('./read-type.state');
-//const {} = require('./constants');
 
 /**
  * @implements {IState}
  */
 class ReadBulkStringState {
   #length;
+  #nextStateFactory;
 
-  /** @param {number} length  */
-  constructor(length) {
+  /**
+   * @param {number} length
+   * @param { StateFactory} nextStateFactory
+   *
+  */
+  constructor(length, nextStateFactory) {
     this.#length = length;
+    this.#nextStateFactory = nextStateFactory;
   }
 
   /**
@@ -30,8 +34,7 @@ class ReadBulkStringState {
       return this;
     }
     emit({ stateType: 'BULK_STRING', value: buffer.subarray(0, this.#length) });
-    const ReadTypeState = require('./read-type.state');
-    return new ReadTypeState();
+    return this.#nextStateFactory();
   }
 
 }
