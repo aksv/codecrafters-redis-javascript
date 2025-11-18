@@ -4,6 +4,33 @@ const Parser = require("./parser/parser");
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
 
+const keys = new Map();
+
+//TODO: move commands wrapper to separate module
+const commands = new Map();
+
+commands.set('SET', (args) => {
+  keys.set(args[0], args[1]);
+  return '+OK\r\n';
+});
+
+commands.set('GET', (args) => {
+  if (keys.has(args[0])) {
+    const val = keys.get(args[0]);
+    return `\$${val.length}\r\n${val}\r\n`
+  }
+  return '$-1\r\n';
+});
+
+commands.set('ECHO', (args) => {
+  return `\$${args[0].length}\r\n${args[0]}\r\n`;
+});
+
+commands.set('PING', () => {
+  return "+PONG\r\n";
+});
+
+
 const server = net.createServer((socket) => {
   const parser = new Parser();
   socket.on("data", (chunk) => {
@@ -15,11 +42,14 @@ const server = net.createServer((socket) => {
           acc.push(item.toString('ascii'));
           return acc;
         }, /** @type {string[]} */ ([]));
-        if (cmdStr.length === 2 && cmdStr[0] === 'ECHO') {
-          socket.write(`\$${cmdStr[1].length}\r\n${cmdStr[1]}\r\n`);
+        let commandHandler;
+        if (commands.has(cmdStr[0].toUpperCase())) {
+          commandHandler = commands.get(cmdStr[0].toUpperCase());
         } else {
-          socket.write("+PONG\r\n");
+          commandHandler = commands.get('PING');
         }
+        const resp = commandHandler(cmdStr.slice(1));
+        socket.write(resp);
       }
     }
   });
