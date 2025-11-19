@@ -34,7 +34,6 @@ class ParserContext {
    * @param {Buffer} chunk
    */
   append(chunk) {
-    //this.#buffer = Buffer.concat([this.#buffer, chunk]);
     if (this.#length + chunk.length > this.#buffer.length) {
       this.#resize(this.#length + chunk.length);
     }
@@ -59,7 +58,6 @@ class ParserContext {
       return null;
     }
     const data = Buffer.from(this.#buffer.subarray(0, n));
-    //this.#buffer = this.#buffer.subarray(n);
     this.#buffer.copy(this.#buffer, 0, n, this.#length);
     this.#length -= n;
     return data;
