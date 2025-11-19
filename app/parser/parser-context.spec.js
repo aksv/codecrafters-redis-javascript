@@ -5,6 +5,16 @@ const ParserContext = require('./parser-context');
 const LF = 10;
 
 describe('Parser context', () => {
+  it('should resize buffer if there is not enough space to save data', () => {
+    const context = new ParserContext(4);
+    context.append(Buffer.from('1234'));
+    expect(context.length).toBe(4);
+    context.append(Buffer.from('56789'));
+    expect(context.length).toBe(9);
+    const data = context.readBytes(9);
+    expect(data?.toString('utf-8')).toBe('123456789');
+  });
+
   it('should get internal buffer length', () => {
     const context = new ParserContext();
     expect(context.length).toBe(0);
@@ -26,7 +36,7 @@ describe('Parser context', () => {
     expect(data?.toString('ascii')).toBe('test');
   });
 
-  it ('should remove bytes returned by readBytes from buffer', () => {
+  it('should remove bytes returned by readBytes from buffer', () => {
     const context = new ParserContext();
     context.append(Buffer.from('hello world'));
     expect(context.length).toBe(11);
@@ -44,7 +54,7 @@ describe('Parser context', () => {
     expect(context.length).toBe(9)
   });
 
-  it('should read bytes until the end of buffer if code not exists', () => {
+  it('should return null if code not exists', () => {
     const context = new ParserContext();
     context.append(Buffer.from('*12\r'));
     const data = context.readUntil(LF);

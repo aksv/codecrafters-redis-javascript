@@ -5,7 +5,6 @@ export interface ParserContext {
   append(chunk: Buffer): void;
   readBytes(n: number): Buffer<ArrayBufferLike> | null;
   readUntil(code: number): Buffer<ArrayBufferLike> | null;
-  readInt8(): number;
 }
 
 export {};
