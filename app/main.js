@@ -9,12 +9,12 @@ const keys = new Map();
 //TODO: move commands wrapper to separate module
 const commands = new Map();
 
-commands.set('SET', (args) => {
+commands.set('SET', /** @param {string[]} args */ (args) => {
   keys.set(args[0], args[1]);
   return '+OK\r\n';
 });
 
-commands.set('GET', (args) => {
+commands.set('GET', /** @param {string[]} args */ (args) => {
   if (keys.has(args[0])) {
     const val = keys.get(args[0]);
     return `\$${val.length}\r\n${val}\r\n`
@@ -22,7 +22,7 @@ commands.set('GET', (args) => {
   return '$-1\r\n';
 });
 
-commands.set('ECHO', (args) => {
+commands.set('ECHO', /** @param {string[]} args */ (args) => {
   return `\$${args[0].length}\r\n${args[0]}\r\n`;
 });
 
